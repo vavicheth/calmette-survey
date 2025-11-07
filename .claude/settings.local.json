@@ -29,7 +29,9 @@
       "Bash(php artisan route:list --path=admin -v)",
       "Bash(composer require barryvdh/laravel-dompdf maatwebsite/excel --no-interaction)",
       "Bash(php artisan make:export SurveyResponsesExport --model=SurveyResponse)",
-      "Bash(php artisan make:controller Admin/DashboardController)"
+      "Bash(php artisan make:controller Admin/DashboardController)",
+      "Bash(composer require telegram-bot/api --no-interaction)",
+      "Bash(php artisan make:command SendMonthlyReportToTelegram)"
     ],
     "deny": [],
     "ask": []

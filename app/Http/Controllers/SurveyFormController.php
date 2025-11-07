@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Survey;
 use App\Models\SurveyResponse;
+use App\Services\TelegramService;
 use Illuminate\Http\Request;
 
 class SurveyFormController extends Controller
@@ -46,7 +47,7 @@ class SurveyFormController extends Controller
         return view('survey.form', compact('survey'));
     }
 
-    public function submit(Request $request, Survey $survey)
+    public function submit(Request $request, Survey $survey, TelegramService $telegram)
     {
         if (!$survey->is_active) {
             return back()->with('error', 'This survey is no longer active.');
@@ -70,6 +71,12 @@ class SurveyFormController extends Controller
                 'answer_text' => $answerText,
             ]);
         }
+
+        // Send Telegram notification
+        $telegram->sendSurveySubmissionNotification(
+            $survey->title,
+            $surveyResponse->id
+        );
 
         return redirect()->route('survey.thank-you');
     }
