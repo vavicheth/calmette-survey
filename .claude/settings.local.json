@@ -1,0 +1,36 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(php artisan make:migration create_surveys_table)",
+      "Bash(php artisan make:migration create_questions_table)",
+      "Bash(php artisan make:migration create_answers_table)",
+      "Bash(php artisan make:migration create_survey_responses_table)",
+      "Bash(php artisan make:model Survey)",
+      "Bash(php artisan make:model Question)",
+      "Bash(php artisan make:model Answer)",
+      "Bash(php artisan make:model SurveyResponse)",
+      "Bash(php artisan make:middleware AdminAuth)",
+      "Bash(php artisan make:controller Admin/SurveyController --resource)",
+      "Bash(php artisan make:controller Admin/QuestionController)",
+      "Bash(php artisan make:controller Admin/StatisticsController)",
+      "Bash(php artisan make:controller SurveyFormController)",
+      "Bash(find . -name \"*.php\" -path \"*/config/*\" -exec basename {})",
+      "Bash(php artisan make:seeder SurveySeeder)",
+      "Bash(php artisan migrate:fresh --seed)",
+      "Bash(php artisan migrate:status)",
+      "Bash(php artisan session:table)",
+      "Bash(php artisan make:migration create_sessions_table)",
+      "Bash(php artisan migrate)",
+      "Bash(php artisan tinker --execute=\"DB::select(''SELECT column_name, data_type FROM information_schema.columns WHERE table_name = \\''sessions\\'' ORDER BY ordinal_position'');\")",
+      "Bash(php artisan db:show)",
+      "Bash(php artisan route:list)",
+      "Bash(php artisan route:list --path=admin)",
+      "Bash(php artisan route:list --path=admin --columns=uri,name,action,middleware)",
+      "Bash(php artisan route:list --path=admin -v)",
+      "Bash(composer require barryvdh/laravel-dompdf maatwebsite/excel --no-interaction)",
+      "Bash(php artisan make:export SurveyResponsesExport --model=SurveyResponse)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

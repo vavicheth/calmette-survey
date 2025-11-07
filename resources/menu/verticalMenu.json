@@ -1,0 +1,33 @@
+{
+  "menu": [
+    {
+      "menuHeader": "Survey Management"
+    },
+    {
+      "url": "/admin/surveys",
+      "name": "Surveys",
+      "icon": "menu-icon icon-base ri ri-file-list-3-line",
+      "slug": "admin.surveys"
+    },
+    {
+      "menuHeader": "Public"
+    },
+    {
+      "url": "/",
+      "name": "View Survey",
+      "icon": "menu-icon icon-base ri ri-questionnaire-line",
+      "slug": "survey.index",
+      "target": "_blank"
+    },
+    {
+      "menuHeader": "Account"
+    },
+    {
+      "url": "/auth/logout",
+      "name": "Logout",
+      "icon": "menu-icon icon-base ri ri-logout-box-r-line",
+      "slug": "auth.logout",
+      "action": "POST"
+    }
+  ]
+}
