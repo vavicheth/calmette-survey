@@ -104,8 +104,8 @@ $configData = Helper::appClasses();
                     @endforeach
                   </select>
                 @elseif($question->question_type === 'rating')
-                  <div class="d-flex gap-2 mt-2">
-                    @for($i = 1; $i <= 5; $i++)
+                  <div class="d-flex gap-2 mt-2 flex-wrap">
+                    @for($i = 1; $i <= 10; $i++)
                       <div class="form-check form-check-inline">
                         <input
                           class="form-check-input"

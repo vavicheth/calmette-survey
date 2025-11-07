@@ -4,6 +4,12 @@
       "menuHeader": "Survey Management"
     },
     {
+      "url": "/admin/dashboard",
+      "name": "Dashboard",
+      "icon": "menu-icon icon-base ri ri-dashboard-line",
+      "slug": "admin.dashboard"
+    },
+    {
       "url": "/admin/surveys",
       "name": "Surveys",
       "icon": "menu-icon icon-base ri ri-file-list-3-line",

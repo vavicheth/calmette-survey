@@ -33,6 +33,8 @@ Route::get('/auth/register-basic', [RegisterBasic::class, 'index'])->name('auth-
 
 // Admin Routes (Protected by authentication)
 Route::middleware(['admin'])->prefix('admin')->group(function () {
+    Route::get('dashboard', [\App\Http\Controllers\Admin\DashboardController::class, 'index'])->name('admin.dashboard');
+
     Route::resource('surveys', SurveyController::class)->names([
         'index' => 'admin.surveys.index',
         'create' => 'admin.surveys.create',

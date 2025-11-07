@@ -90,6 +90,7 @@ $configData = Helper::appClasses();
                 @method('DELETE')
                 <button type="submit" class="btn btn-sm btn-outline-danger">
                   <i class="bx bx-trash"></i>
+                  Delete
                 </button>
               </form>
             </div>
@@ -126,7 +127,7 @@ $configData = Helper::appClasses();
               <option value="radio">Multiple Choice (Single)</option>
               <option value="checkbox">Multiple Choice (Multiple)</option>
               <option value="select">Dropdown</option>
-              <option value="rating">Rating (1-5)</option>
+              <option value="rating">Rating (1-10)</option>
             </select>
           </div>
 

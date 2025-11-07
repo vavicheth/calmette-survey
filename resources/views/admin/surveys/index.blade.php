@@ -61,7 +61,7 @@ $configData = Helper::appClasses();
                 </form>
               @endif
             </td>
-            <td>{{ $survey->created_at->format('M d, Y') }}</td>
+            <td>{{ $survey->created_at->format('d/m/Y') }}</td>
             <td>
               <div class="d-flex gap-1 flex-wrap">
                 <a href="{{ route('admin.surveys.edit', $survey) }}" class="btn btn-sm btn-primary">

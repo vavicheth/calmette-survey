@@ -10,7 +10,7 @@ class LoginBasic extends Controller
   public function index(Request $request)
   {
     if ($request->session()->get('admin_logged_in')) {
-      return redirect()->route('admin.surveys.index');
+      return redirect()->route('admin.dashboard');
     }
 
     $pageConfigs = ['myLayout' => 'blank'];
@@ -30,7 +30,7 @@ class LoginBasic extends Controller
       $request->session()->put('admin_email', $request->email);
       $request->session()->save();
 
-      return redirect()->route('admin.surveys.index')->with('success', 'Login successful!');
+      return redirect()->route('admin.dashboard')->with('success', 'Login successful!');
     }
 
     return back()->withInput($request->only('email'))->with('error', 'Invalid credentials');

@@ -28,7 +28,8 @@
       "Bash(php artisan route:list --path=admin --columns=uri,name,action,middleware)",
       "Bash(php artisan route:list --path=admin -v)",
       "Bash(composer require barryvdh/laravel-dompdf maatwebsite/excel --no-interaction)",
-      "Bash(php artisan make:export SurveyResponsesExport --model=SurveyResponse)"
+      "Bash(php artisan make:export SurveyResponsesExport --model=SurveyResponse)",
+      "Bash(php artisan make:controller Admin/DashboardController)"
     ],
     "deny": [],
     "ask": []

@@ -103,9 +103,27 @@ $configData = Helper::appClasses();
           </div>
         @endif
 
+        <!-- Chart Type Switcher -->
+        <div class="mb-3">
+          <div class="btn-group btn-group-sm" role="group">
+            <button type="button" class="btn btn-outline-primary chart-type-btn active" data-chart-id="{{ $stat['question_id'] }}" data-chart-type="bar">
+              <i class="bx bx-bar-chart"></i> Bar
+            </button>
+            <button type="button" class="btn btn-outline-primary chart-type-btn" data-chart-id="{{ $stat['question_id'] }}" data-chart-type="line">
+              <i class="bx bx-line-chart"></i> Line
+            </button>
+            <button type="button" class="btn btn-outline-primary chart-type-btn" data-chart-id="{{ $stat['question_id'] }}" data-chart-type="pie">
+              <i class="bx bx-pie-chart-alt-2"></i> Pie
+            </button>
+            <button type="button" class="btn btn-outline-primary chart-type-btn" data-chart-id="{{ $stat['question_id'] }}" data-chart-type="doughnut">
+              <i class="bx bx-doughnut-chart"></i> Doughnut
+            </button>
+          </div>
+        </div>
+
         <!-- Chart Canvas -->
         <div class="mb-4">
-          <canvas id="chart-{{ $stat['question_id'] }}" style="max-height: 300px;"></canvas>
+          <canvas id="chart-{{ $stat['question_id'] }}" style="max-height: 350px;"></canvas>
         </div>
 
         <!-- Data Table -->
@@ -188,7 +206,7 @@ $configData = Helper::appClasses();
             @foreach($responses->take(10) as $response)
               <tr>
                 <td>#{{ $response->id }}</td>
-                <td>{{ $response->created_at->format('M d, Y H:i') }}</td>
+                <td>{{ $response->created_at->format('d/m/Y H:i') }}</td>
                 <td>{{ $response->respondent_ip }}</td>
                 <td>{{ $response->answers->count() }}</td>
               </tr>
@@ -213,24 +231,34 @@ $configData = Helper::appClasses();
     'rgba(113, 221, 55, 0.8)',
     'rgba(255, 159, 67, 0.8)',
     'rgba(255, 71, 87, 0.8)',
-    'rgba(105, 108, 255, 0.5)',
-    'rgba(3, 195, 236, 0.5)',
-    'rgba(113, 221, 55, 0.5)',
+    'rgba(156, 39, 176, 0.8)',
+    'rgba(255, 193, 7, 0.8)',
+    'rgba(0, 150, 136, 0.8)',
   ];
 
   chartData.forEach((data, index) => {
     const ctx = document.getElementById('chart-' + data.id);
     if (ctx) {
-      new Chart(ctx, {
-        type: 'bar',
+      // Determine chart type based on data
+      let chartType = 'bar';
+
+      // Use pie chart for questions with fewer options
+      if (data.labels.length <= 5) {
+        chartType = 'pie';
+      } else if (data.labels.length <= 8) {
+        chartType = 'doughnut';
+      }
+
+      const chartConfig = {
+        type: chartType,
         data: {
           labels: data.labels,
           datasets: [{
             label: 'Responses',
             data: data.data,
             backgroundColor: colors,
-            borderColor: colors.map(color => color.replace('0.8', '1')),
-            borderWidth: 1
+            borderColor: '#fff',
+            borderWidth: 2
           }]
         },
         options: {
@@ -238,23 +266,125 @@ $configData = Helper::appClasses();
           maintainAspectRatio: true,
           plugins: {
             legend: {
-              display: false
+              display: true,
+              position: chartType === 'bar' ? 'top' : 'bottom'
             },
             title: {
               display: false
-            }
-          },
-          scales: {
-            y: {
-              beginAtZero: true,
-              ticks: {
-                stepSize: 1
+            },
+            tooltip: {
+              callbacks: {
+                label: function(context) {
+                  let label = context.label || '';
+                  if (label) {
+                    label += ': ';
+                  }
+                  label += context.parsed.y || context.parsed;
+                  const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                  const percentage = ((context.parsed.y || context.parsed) / total * 100).toFixed(1);
+                  label += ` (${percentage}%)`;
+                  return label;
+                }
               }
             }
           }
         }
-      });
+      };
+
+      // Add scales only for bar charts
+      if (chartType === 'bar') {
+        chartConfig.options.scales = {
+          y: {
+            beginAtZero: true,
+            ticks: {
+              stepSize: 1
+            }
+          }
+        };
+      }
+
+      new Chart(ctx, chartConfig);
     }
+  });
+
+  // Add chart type switcher functionality
+  document.querySelectorAll('.chart-type-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+      const chartId = this.dataset.chartId;
+      const chartType = this.dataset.chartType;
+      const canvas = document.getElementById('chart-' + chartId);
+
+      if (canvas) {
+        // Destroy existing chart
+        const existingChart = Chart.getChart(canvas);
+        if (existingChart) {
+          existingChart.destroy();
+        }
+
+        // Find the chart data
+        const data = chartData.find(d => d.id == chartId);
+
+        if (data) {
+          const chartConfig = {
+            type: chartType,
+            data: {
+              labels: data.labels,
+              datasets: [{
+                label: 'Responses',
+                data: data.data,
+                backgroundColor: colors,
+                borderColor: '#fff',
+                borderWidth: 2
+              }]
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio: true,
+              plugins: {
+                legend: {
+                  display: true,
+                  position: chartType === 'bar' ? 'top' : 'bottom'
+                },
+                tooltip: {
+                  callbacks: {
+                    label: function(context) {
+                      let label = context.label || '';
+                      if (label) {
+                        label += ': ';
+                      }
+                      label += context.parsed.y || context.parsed;
+                      const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                      const percentage = ((context.parsed.y || context.parsed) / total * 100).toFixed(1);
+                      label += ` (${percentage}%)`;
+                      return label;
+                    }
+                  }
+                }
+              }
+            }
+          };
+
+          if (chartType === 'bar') {
+            chartConfig.options.scales = {
+              y: {
+                beginAtZero: true,
+                ticks: {
+                  stepSize: 1
+                }
+              }
+            };
+          }
+
+          new Chart(canvas, chartConfig);
+        }
+      }
+
+      // Update active button state
+      this.closest('.btn-group').querySelectorAll('.chart-type-btn').forEach(b => {
+        b.classList.remove('active');
+      });
+      this.classList.add('active');
+    });
   });
 </script>
 @endsection
