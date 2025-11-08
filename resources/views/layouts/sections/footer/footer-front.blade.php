@@ -77,24 +77,21 @@
   <div class="footer-bottom py-5">
     <div class="container d-flex flex-wrap justify-content-between flex-md-row flex-column text-center text-md-start">
       <div class="mb-2 mb-md-0">
-        <span class="footer-bottom-text">©
-          <script>
+        &#169;
+        <script>
           document.write(new Date().getFullYear());
-          </script>
-          , Made with <i class="icon-base ri ri-heart-fill text-danger"></i> by
-        </span>
-        <a href="{{config('variables.creatorUrl')}}" target="_blank"
-          class="footer-link fw-medium footer-theme-link">{{config('variables.creatorName')}}</a>
+        </script>
+        , Calmette ❤️ Patients
       </div>
-      <div>
-        <a href="{{config('variables.githubFreeUrl')}}" class="footer-link me-4" target="_blank"><i
-            class="icon-base ri ri-github-fill"></i></a>
-        <a href="{{config('variables.facebookUrl')}}" class="footer-link me-4" target="_blank"><i
-            class="icon-base ri ri-facebook-circle-fill"></i></a>
-        <a href="{{config('variables.twitterUrl')}}" class="footer-link me-4" target="_blank"><i
-            class="icon-base ri ri-twitter-x-fill"></i></a>
-        <a href="{{config('variables.instagramUrl')}}" class="footer-link" target="_blank"><i
-            class="icon-base ri ri-instagram-line"></i></a>
+      <div class="d-none d-lg-inline-block">
+        {{--        <a href="{{ config('variables.licenseUrl') ? config('variables.licenseUrl') : '#' }}" class="footer-link me-4"--}}
+        {{--          target="_blank">License</a>--}}
+        {{--        <a href="{{ config('variables.moreThemes') ? config('variables.moreThemes') : '#' }}" target="_blank"--}}
+        {{--          class="footer-link me-4">More Themes</a>--}}
+        {{--        <a href="{{ config('variables.documentation') ? config('variables.documentation') . '/laravel-introduction.html' : '#' }}"--}}
+        {{--          target="_blank" class="footer-link me-4">Documentation</a>--}}
+        {{--        <a href="{{ config('variables.support') ? config('variables.support') : '#' }}" target="_blank"--}}
+        {{--          class="footer-link d-none d-sm-inline-block">Support</a>--}}
       </div>
     </div>
   </div>

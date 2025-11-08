@@ -11,6 +11,8 @@ use App\Http\Controllers\SurveyFormController;
 use App\Http\Controllers\Admin\SurveyController;
 use App\Http\Controllers\Admin\QuestionController;
 use App\Http\Controllers\Admin\StatisticsController;
+use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\ProfileController;
 
 // Public Survey Routes (Root path)
 Route::get('/', [SurveyFormController::class, 'index'])->name('survey.index');
@@ -55,4 +57,24 @@ Route::middleware(['admin'])->prefix('admin')->group(function () {
     Route::get('surveys/{survey}/statistics', [StatisticsController::class, 'index'])->name('admin.statistics.index');
     Route::get('surveys/{survey}/statistics/export-excel', [StatisticsController::class, 'exportExcel'])->name('admin.statistics.export-excel');
     Route::get('surveys/{survey}/statistics/export-pdf', [StatisticsController::class, 'exportPdf'])->name('admin.statistics.export-pdf');
+
+    // Users Management
+    Route::resource('users', UserController::class)->names([
+        'index' => 'admin.users.index',
+        'create' => 'admin.users.create',
+        'store' => 'admin.users.store',
+        'show' => 'admin.users.show',
+        'edit' => 'admin.users.edit',
+        'update' => 'admin.users.update',
+        'destroy' => 'admin.users.destroy',
+    ]);
+});
+
+// Profile Routes (Protected by authentication)
+Route::middleware(['admin'])->group(function () {
+    Route::get('profile', [ProfileController::class, 'show'])->name('profile.show');
+    Route::get('profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::put('profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::get('profile/change-password', [ProfileController::class, 'showChangePasswordForm'])->name('profile.change-password');
+    Route::post('profile/change-password', [ProfileController::class, 'changePassword'])->name('profile.change-password.update');
 });

@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\authentications;
 
 use App\Http\Controllers\Controller;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 
 class LoginBasic extends Controller
 {
@@ -24,10 +26,14 @@ class LoginBasic extends Controller
       'password' => 'required',
     ]);
 
-    // Simple authentication - in production, use proper user authentication
-    if ($request->email === 'admin@survey.com' && $request->password === 'admin123') {
+    // Authenticate user from database
+    $user = User::where('email', $request->email)->first();
+
+    if ($user && Hash::check($request->password, $user->password)) {
       $request->session()->put('admin_logged_in', true);
-      $request->session()->put('admin_email', $request->email);
+      $request->session()->put('admin_email', $user->email);
+      $request->session()->put('user_id', $user->id);
+      $request->session()->put('user_name', $user->name);
       $request->session()->save();
 
       return redirect()->route('admin.dashboard')->with('success', 'Login successful!');
@@ -38,7 +44,7 @@ class LoginBasic extends Controller
 
   public function logout(Request $request)
   {
-    $request->session()->forget(['admin_logged_in', 'admin_email']);
+    $request->session()->forget(['admin_logged_in', 'admin_email', 'user_id', 'user_name']);
     $request->session()->save();
     return redirect()->route('auth-login-basic')->with('success', 'Logged out successfully');
   }

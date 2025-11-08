@@ -31,7 +31,15 @@
       "Bash(php artisan make:export SurveyResponsesExport --model=SurveyResponse)",
       "Bash(php artisan make:controller Admin/DashboardController)",
       "Bash(composer require telegram-bot/api --no-interaction)",
-      "Bash(php artisan make:command SendMonthlyReportToTelegram)"
+      "Bash(php artisan make:command SendMonthlyReportToTelegram)",
+      "Bash(php artisan make:controller Admin/UserController --resource)",
+      "Bash(php artisan make:controller ProfileController)",
+      "Bash(php artisan route:list --path=admin/users)",
+      "Bash(php artisan route:list --path=profile)",
+      "Bash(php artisan make:seeder UserSeeder)",
+      "Bash(php artisan db:seed --class=UserSeeder)",
+      "Bash(php artisan route:list --path=admin/users --columns=uri,name,action,middleware)",
+      "Bash(php artisan route:list --path=admin/users -v)"
     ],
     "deny": [],
     "ask": []

@@ -13,16 +13,9 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-
-//      User::factory(2)->create();
-
-      User::factory()->create([
-        'name' => 'Test User',
-        'email' => 'test@example.com',
-      ]);
-
-        // Seed survey data
+        // Seed users and survey data
         $this->call([
+            UserSeeder::class,
             SurveySeeder::class,
         ]);
     }

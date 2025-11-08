@@ -45,8 +45,7 @@ data-base-url="{{ url('/') }}" data-framework="laravel" data-template="{{ $confi
 content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
 
   <title>
-    @yield('title') | {{ config('variables.templateName') ? config('variables.templateName') : 'TemplateName' }}
-    - {{ config('variables.templateSuffix') ? config('variables.templateSuffix') : 'TemplateSuffix' }}
+    @yield('title') | {{ env("APP_NAME") }}
 </title>
   <meta name="description"
 content="{{ config('variables.templateDescription') ? config('variables.templateDescription') : '' }}" />

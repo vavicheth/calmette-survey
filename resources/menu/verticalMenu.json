@@ -16,6 +16,12 @@
       "slug": "admin.surveys"
     },
     {
+      "url": "/admin/users",
+      "name": "Users Management",
+      "icon": "menu-icon icon-base ri ri-user-settings-line",
+      "slug": "admin.users"
+    },
+    {
       "menuHeader": "Public"
     },
     {
