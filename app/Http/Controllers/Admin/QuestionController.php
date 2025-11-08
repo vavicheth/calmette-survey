@@ -40,9 +40,17 @@ class QuestionController extends Controller
             'question_type' => 'required|in:text,textarea,radio,checkbox,select,rating',
             'options' => 'nullable|array',
             'options.*' => 'string',
-            'order' => 'integer',
-            'is_required' => 'boolean',
+            'order' => 'nullable|integer',
+            'is_required' => 'nullable|boolean',
         ]);
+
+        // Handle is_required checkbox (if not checked, it won't be in the request)
+        $validated['is_required'] = $request->has('is_required') ? true : false;
+
+        // Set options to null if not provided (for text, textarea, rating types)
+        if (!isset($validated['options']) || empty($validated['options'])) {
+            $validated['options'] = null;
+        }
 
         $question->update($validated);
 

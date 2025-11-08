@@ -85,14 +85,22 @@ $configData = Helper::appClasses();
                   </div>
                 @endif
               </div>
-              <form action="{{ route('admin.questions.destroy', $question) }}" method="POST" onsubmit="return confirm('Delete this question?')">
-                @csrf
-                @method('DELETE')
-                <button type="submit" class="btn btn-sm btn-outline-danger">
-                  <i class="bx bx-trash"></i>
-                  Delete
-                </button>
-              </form>
+              <div class="d-flex gap-2">
+                <div class="flex gap-2">
+                  <button type="button" class="btn btn-sm btn-outline-primary my-2" data-bs-toggle="modal" data-bs-target="#editQuestionModal{{ $question->id }}">
+                    {{--                  <i class="bx bx-edit"></i>--}}
+                    Edit
+                  </button>
+                  <form action="{{ route('admin.questions.destroy', $question) }}" method="POST" onsubmit="return confirm('Delete this question?')">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="btn btn-sm btn-outline-danger">
+                      <i class="bx bx-trash"></i>
+                      Delete
+                    </button>
+                  </form>
+                </div>
+              </div>
             </div>
           </div>
         @empty
@@ -102,6 +110,58 @@ $configData = Helper::appClasses();
     </div>
   </div>
 </div>
+
+<!-- Edit Question Modals -->
+@foreach($survey->questions as $question)
+<div class="modal fade" id="editQuestionModal{{ $question->id }}" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+    <form action="{{ route('admin.questions.update', $question) }}" method="POST">
+      @csrf
+      @method('PUT')
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Edit Question</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <label class="form-label">Question Text <span class="text-danger">*</span></label>
+            <textarea class="form-control" name="question_text" rows="3" required>{{ $question->question_text }}</textarea>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Question Type <span class="text-danger">*</span></label>
+            <select class="form-select edit-question-type" name="question_type" data-question-id="{{ $question->id }}" required>
+              <option value="text" {{ $question->question_type === 'text' ? 'selected' : '' }}>Short Text</option>
+              <option value="textarea" {{ $question->question_type === 'textarea' ? 'selected' : '' }}>Long Text</option>
+              <option value="radio" {{ $question->question_type === 'radio' ? 'selected' : '' }}>Multiple Choice (Single)</option>
+              <option value="checkbox" {{ $question->question_type === 'checkbox' ? 'selected' : '' }}>Multiple Choice (Multiple)</option>
+              <option value="select" {{ $question->question_type === 'select' ? 'selected' : '' }}>Dropdown</option>
+              <option value="rating" {{ $question->question_type === 'rating' ? 'selected' : '' }}>Rating (1-10)</option>
+            </select>
+          </div>
+
+          <div class="mb-3 edit-options-container" id="editOptionsContainer{{ $question->id }}" style="display: {{ in_array($question->question_type, ['radio', 'checkbox', 'select']) ? 'block' : 'none' }};">
+            <label class="form-label">Options (one per line)</label>
+            <textarea class="form-control edit-options-input" id="editOptionsInput{{ $question->id }}" rows="4" placeholder="Option 1&#10;Option 2&#10;Option 3">{{ $question->options ? implode("\n", $question->options) : '' }}</textarea>
+          </div>
+
+          <div class="mb-3">
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" name="is_required" value="1" id="editIsRequired{{ $question->id }}" {{ $question->is_required ? 'checked' : '' }}>
+              <label class="form-check-label" for="editIsRequired{{ $question->id }}">Required</label>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-primary">Update Question</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+@endforeach
 
 <!-- Add Question Modal -->
 <div class="modal fade" id="addQuestionModal" tabindex="-1" aria-hidden="true">
@@ -155,6 +215,7 @@ $configData = Helper::appClasses();
 
 @section('page-script')
 <script>
+  // Add Question Modal - Question Type Change
   document.getElementById('questionType').addEventListener('change', function() {
     const optionsContainer = document.getElementById('optionsContainer');
     const optionsInput = document.getElementById('optionsInput');
@@ -164,6 +225,7 @@ $configData = Helper::appClasses();
     optionsInput.required = showOptions;
   });
 
+  // Add Question Modal - Form Submit
   document.querySelector('#addQuestionModal form').addEventListener('submit', function(e) {
     const questionType = document.getElementById('questionType').value;
     const optionsInput = document.getElementById('optionsInput');
@@ -183,6 +245,47 @@ $configData = Helper::appClasses();
         this.appendChild(input);
       });
     }
+  });
+
+  // Edit Question Modals - Question Type Change
+  document.querySelectorAll('.edit-question-type').forEach(select => {
+    select.addEventListener('change', function() {
+      const questionId = this.getAttribute('data-question-id');
+      const optionsContainer = document.getElementById('editOptionsContainer' + questionId);
+      const optionsInput = document.getElementById('editOptionsInput' + questionId);
+      const showOptions = ['radio', 'checkbox', 'select'].includes(this.value);
+
+      optionsContainer.style.display = showOptions ? 'block' : 'none';
+      if (optionsInput) {
+        optionsInput.required = showOptions;
+      }
+    });
+  });
+
+  // Edit Question Modals - Form Submit
+  document.querySelectorAll('[id^="editQuestionModal"] form').forEach(form => {
+    form.addEventListener('submit', function(e) {
+      const questionTypeSelect = this.querySelector('.edit-question-type');
+      const questionType = questionTypeSelect.value;
+      const questionId = questionTypeSelect.getAttribute('data-question-id');
+      const optionsInput = document.getElementById('editOptionsInput' + questionId);
+
+      if (['radio', 'checkbox', 'select'].includes(questionType)) {
+        const options = optionsInput.value.split('\n').filter(opt => opt.trim());
+
+        // Remove existing hidden inputs
+        this.querySelectorAll('input[name="options[]"]').forEach(el => el.remove());
+
+        // Add new hidden inputs for each option
+        options.forEach(option => {
+          const input = document.createElement('input');
+          input.type = 'hidden';
+          input.name = 'options[]';
+          input.value = option.trim();
+          this.appendChild(input);
+        });
+      }
+    });
   });
 </script>
 @endsection
