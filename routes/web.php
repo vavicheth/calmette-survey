@@ -53,6 +53,7 @@ Route::middleware(['admin'])->prefix('admin')->group(function () {
     Route::post('surveys/{survey}/questions', [QuestionController::class, 'store'])->name('admin.questions.store');
     Route::put('questions/{question}', [QuestionController::class, 'update'])->name('admin.questions.update');
     Route::delete('questions/{question}', [QuestionController::class, 'destroy'])->name('admin.questions.destroy');
+    Route::post('surveys/{survey}/questions/reorder', [QuestionController::class, 'reorder'])->name('admin.questions.reorder');
 
     Route::get('surveys/{survey}/statistics', [StatisticsController::class, 'index'])->name('admin.statistics.index');
     Route::get('surveys/{survey}/statistics/export-excel', [StatisticsController::class, 'exportExcel'])->name('admin.statistics.export-excel');

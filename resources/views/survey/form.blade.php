@@ -17,7 +17,7 @@ $configData = Helper::appClasses();
       <div class="card">
         <div class="card-body">
           <div class="app-brand justify-content-center mb-6">
-            <span class="app-brand-text demo text-heading fw-bold">{{ config('variables.templateName') }}</span>
+            <span class="app-brand-text demo text-heading fw-bold">{{ \Illuminate\Support\Str::upper(env("APP_NAME")) }}</span>
           </div>
 
           <h4 class="mb-1">{{ $survey->title }}</h4>

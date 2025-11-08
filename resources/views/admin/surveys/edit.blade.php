@@ -6,6 +6,70 @@ $configData = Helper::appClasses();
 
 @section('title', 'Edit Survey')
 
+@section('vendor-style')
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.css">
+<style>
+  .sortable-ghost {
+    opacity: 0.4;
+    background: #f8f9fa;
+  }
+
+  .sortable-chosen {
+    background: #e7f3ff;
+  }
+
+  .sortable-drag {
+    opacity: 1;
+  }
+
+  .drag-handle {
+    cursor: grab !important;
+    cursor: -webkit-grab !important;
+    cursor: -moz-grab !important;
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    touch-action: none;
+    -webkit-touch-callout: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 30px;
+    min-height: 30px;
+    padding: 5px;
+  }
+
+  .drag-handle:hover {
+    background: rgba(0,0,0,0.05);
+    border-radius: 4px;
+  }
+
+  .drag-handle:active {
+    cursor: grabbing !important;
+    cursor: -webkit-grabbing !important;
+    cursor: -moz-grabbing !important;
+    background: rgba(0,0,0,0.1);
+  }
+
+  .question-item {
+    position: relative;
+  }
+
+  .question-item.sortable-chosen {
+    transition: none !important;
+  }
+
+  .question-item:hover {
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  }
+
+  #questionsList {
+    min-height: 50px;
+  }
+</style>
+@endsection
+
 @section('content')
 <div class="row">
   <div class="col-lg-8">
@@ -70,42 +134,46 @@ $configData = Helper::appClasses();
         </button>
       </div>
       <div class="card-body">
+        <div id="questionsList">
         @forelse($survey->questions as $question)
-          <div class="border rounded p-3 mb-3">
-            <div class="d-flex justify-content-between">
-              <div class="flex-grow-1">
-                <p class="mb-1"><strong>{{ $question->question_text }}</strong></p>
-                <span class="badge bg-label-info">{{ ucfirst($question->question_type) }}</span>
-                @if($question->is_required)
-                  <span class="badge bg-label-danger">Required</span>
-                @endif
-                @if($question->options)
-                  <div class="mt-2 text-muted small">
-                    Options: {{ implode(', ', $question->options) }}
-                  </div>
-                @endif
+          <div class="border rounded p-3 mb-3 question-item" data-id="{{ $question->id }}">
+            <div class="d-flex justify-content-between align-items-start">
+              <div class="d-flex align-items-start flex-grow-1">
+                <div class="drag-handle me-3">
+                  <i class="bx bx-grid-vertical ri ri-menu-line icon-md" style="font-size: 1.5rem; color: #999; pointer-events: none;"></i>
+                </div>
+                <div class="flex-grow-1">
+                  <p class="mb-1"><strong>{{ $question->question_text }}</strong></p>
+                  <span class="badge bg-label-info">{{ ucfirst($question->question_type) }}</span>
+                  @if($question->is_required)
+                    <span class="badge bg-label-danger">Required</span>
+                  @endif
+                  @if($question->options)
+                    <div class="mt-2 text-muted small">
+                      Options: {{ implode(', ', $question->options) }}
+                    </div>
+                  @endif
+                </div>
               </div>
               <div class="d-flex gap-2">
-                <div class="flex gap-2">
-                  <button type="button" class="btn btn-sm btn-outline-primary my-2" data-bs-toggle="modal" data-bs-target="#editQuestionModal{{ $question->id }}">
-                    {{--                  <i class="bx bx-edit"></i>--}}
-                    Edit
+                <button type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#editQuestionModal{{ $question->id }}">
+                  Edit
+                </button>
+                <form action="{{ route('admin.questions.destroy', $question) }}" method="POST" onsubmit="return confirm('Delete this question?')">
+                  @csrf
+                  @method('DELETE')
+                  <button type="submit" class="btn btn-sm btn-outline-danger">
+                    <i class="bx bx-trash"></i>
+                    Delete
                   </button>
-                  <form action="{{ route('admin.questions.destroy', $question) }}" method="POST" onsubmit="return confirm('Delete this question?')">
-                    @csrf
-                    @method('DELETE')
-                    <button type="submit" class="btn btn-sm btn-outline-danger">
-                      <i class="bx bx-trash"></i>
-                      Delete
-                    </button>
-                  </form>
-                </div>
+                </form>
               </div>
             </div>
           </div>
         @empty
           <p class="text-muted">No questions added yet. Click "Add Question" to get started.</p>
         @endforelse
+        </div>
       </div>
     </div>
   </div>
@@ -214,41 +282,128 @@ $configData = Helper::appClasses();
 @endsection
 
 @section('page-script')
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
 <script>
-  // Add Question Modal - Question Type Change
-  document.getElementById('questionType').addEventListener('change', function() {
-    const optionsContainer = document.getElementById('optionsContainer');
-    const optionsInput = document.getElementById('optionsInput');
-    const showOptions = ['radio', 'checkbox', 'select'].includes(this.value);
+  // Wait for DOM to be fully loaded
+  document.addEventListener('DOMContentLoaded', function() {
+    // Initialize Sortable for drag and drop
+    const questionsList = document.getElementById('questionsList');
 
-    optionsContainer.style.display = showOptions ? 'block' : 'none';
-    optionsInput.required = showOptions;
+    if (questionsList) {
+      console.log('Initializing Sortable on questionsList');
+      console.log('Number of questions:', questionsList.querySelectorAll('.question-item').length);
+      console.log('Number of drag handles:', questionsList.querySelectorAll('.drag-handle').length);
+
+      const sortable = new Sortable(questionsList, {
+        animation: 150,
+        handle: '.drag-handle',
+        ghostClass: 'sortable-ghost',
+        chosenClass: 'sortable-chosen',
+        dragClass: 'sortable-drag',
+        draggable: '.question-item',
+        forceFallback: true,
+        fallbackTolerance: 3,
+        fallbackOnBody: true,
+        swapThreshold: 0.65,
+        onChoose: function(evt) {
+          console.log('✓ Item chosen (mousedown on handle):', evt.item.getAttribute('data-id'));
+        },
+        onStart: function(evt) {
+          console.log('✓ Drag started on item:', evt.item.getAttribute('data-id'));
+        },
+        onMove: function(evt) {
+          console.log('✓ Item is moving');
+        },
+        onEnd: function(evt) {
+          console.log('✓ Drag ended. Old index:', evt.oldIndex, 'New index:', evt.newIndex);
+
+          // Get the new order
+          const items = questionsList.querySelectorAll('.question-item');
+          const order = Array.from(items).map(item => item.getAttribute('data-id'));
+
+          console.log('New order:', order);
+
+          // Send AJAX request to update order
+          fetch('{{ route('admin.questions.reorder', $survey) }}', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            },
+            body: JSON.stringify({ order: order })
+          })
+          .then(response => response.json())
+          .then(data => {
+            if (data.success) {
+              console.log('Order updated successfully');
+            }
+          })
+          .catch(error => {
+            console.error('Error updating order:', error);
+          });
+        }
+      });
+
+      console.log('Sortable initialized:', sortable);
+
+      // Test: Add click event to drag handles to verify they're interactive
+      const handles = questionsList.querySelectorAll('.drag-handle');
+      handles.forEach((handle, index) => {
+        handle.addEventListener('mousedown', function(e) {
+          console.log('✓ Mousedown detected on drag handle #' + index);
+        });
+        handle.addEventListener('mouseup', function(e) {
+          console.log('✓ Mouseup detected on drag handle #' + index);
+        });
+      });
+    } else {
+      console.error('questionsList element not found');
+    }
   });
 
-  // Add Question Modal - Form Submit
-  document.querySelector('#addQuestionModal form').addEventListener('submit', function(e) {
-    const questionType = document.getElementById('questionType').value;
-    const optionsInput = document.getElementById('optionsInput');
+  // Add Question Modal - Question Type Change
+  window.addEventListener('load', function() {
+    const questionTypeEl = document.getElementById('questionType');
+    if (questionTypeEl) {
+      questionTypeEl.addEventListener('change', function() {
+        const optionsContainer = document.getElementById('optionsContainer');
+        const optionsInput = document.getElementById('optionsInput');
+        const showOptions = ['radio', 'checkbox', 'select'].includes(this.value);
 
-    if (['radio', 'checkbox', 'select'].includes(questionType)) {
-      const options = optionsInput.value.split('\n').filter(opt => opt.trim());
-
-      // Remove existing hidden inputs
-      this.querySelectorAll('input[name="options[]"]').forEach(el => el.remove());
-
-      // Add new hidden inputs for each option
-      options.forEach(option => {
-        const input = document.createElement('input');
-        input.type = 'hidden';
-        input.name = 'options[]';
-        input.value = option.trim();
-        this.appendChild(input);
+        optionsContainer.style.display = showOptions ? 'block' : 'none';
+        optionsInput.required = showOptions;
       });
     }
   });
 
-  // Edit Question Modals - Question Type Change
-  document.querySelectorAll('.edit-question-type').forEach(select => {
+  // Add Question Modal - Form Submit
+  window.addEventListener('load', function() {
+    const addForm = document.querySelector('#addQuestionModal form');
+    if (addForm) {
+      addForm.addEventListener('submit', function(e) {
+        const questionType = document.getElementById('questionType').value;
+        const optionsInput = document.getElementById('optionsInput');
+
+        if (['radio', 'checkbox', 'select'].includes(questionType)) {
+          const options = optionsInput.value.split('\n').filter(opt => opt.trim());
+
+          // Remove existing hidden inputs
+          this.querySelectorAll('input[name="options[]"]').forEach(el => el.remove());
+
+          // Add new hidden inputs for each option
+          options.forEach(option => {
+            const input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = 'options[]';
+            input.value = option.trim();
+            this.appendChild(input);
+          });
+        }
+      });
+    }
+
+    // Edit Question Modals - Question Type Change
+    document.querySelectorAll('.edit-question-type').forEach(select => {
     select.addEventListener('change', function() {
       const questionId = this.getAttribute('data-question-id');
       const optionsContainer = document.getElementById('editOptionsContainer' + questionId);
@@ -287,5 +442,6 @@ $configData = Helper::appClasses();
       }
     });
   });
+});
 </script>
 @endsection

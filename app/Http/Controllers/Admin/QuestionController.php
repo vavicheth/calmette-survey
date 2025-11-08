@@ -63,4 +63,22 @@ class QuestionController extends Controller
 
         return back()->with('success', 'Question deleted successfully!');
     }
+
+    public function reorder(Request $request, Survey $survey)
+    {
+        $validated = $request->validate([
+            'order' => 'required|array',
+            'order.*' => 'integer|exists:questions,id',
+        ]);
+
+        // Update the order for each question
+        foreach ($validated['order'] as $index => $questionId) {
+            $question = Question::find($questionId);
+            if ($question && $question->survey_id === $survey->id) {
+                $question->update(['order' => $index + 1]);
+            }
+        }
+
+        return response()->json(['success' => true]);
+    }
 }
