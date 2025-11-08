@@ -53,6 +53,11 @@ class SurveyFormController extends Controller
             return back()->with('error', 'This survey is no longer active.');
         }
 
+        // Load questions to prepare Q&A data
+        $survey->load(['questions' => function($query) {
+            $query->orderBy('order');
+        }]);
+
         // Create survey response
         $surveyResponse = SurveyResponse::create([
             'survey_id' => $survey->id,
@@ -60,22 +65,36 @@ class SurveyFormController extends Controller
             'respondent_user_agent' => $request->userAgent(),
         ]);
 
-        // Save answers
-        foreach ($request->input('answers', []) as $questionId => $answerText) {
-            if (is_array($answerText)) {
-                $answerText = implode(', ', $answerText);
-            }
+        // Prepare questions and answers for Telegram
+        $questionsAndAnswers = [];
 
-            $surveyResponse->answers()->create([
-                'question_id' => $questionId,
-                'answer_text' => $answerText,
-            ]);
+        // Save answers and build Q&A array
+        foreach ($request->input('answers', []) as $questionId => $answerText) {
+            $question = $survey->questions->firstWhere('id', $questionId);
+
+            if ($question) {
+                // Store original answer (array or string)
+                $answerForDb = is_array($answerText) ? implode(', ', $answerText) : $answerText;
+
+                $surveyResponse->answers()->create([
+                    'question_id' => $questionId,
+                    'answer_text' => $answerForDb,
+                ]);
+
+                // Add to Q&A array for Telegram
+                $questionsAndAnswers[] = [
+                    'question' => $question->question_text,
+                    'answer' => $answerForDb ?: '(No answer provided)',
+                    'type' => $question->question_type,
+                ];
+            }
         }
 
-        // Send Telegram notification
+        // Send Telegram notification with full Q&A
         $telegram->sendSurveySubmissionNotification(
             $survey->title,
-            $surveyResponse->id
+            $surveyResponse->id,
+            $questionsAndAnswers
         );
 
         return redirect()->route('survey.thank-you');
