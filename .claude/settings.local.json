@@ -39,7 +39,8 @@
       "Bash(php artisan make:seeder UserSeeder)",
       "Bash(php artisan db:seed --class=UserSeeder)",
       "Bash(php artisan route:list --path=admin/users --columns=uri,name,action,middleware)",
-      "Bash(php artisan route:list --path=admin/users -v)"
+      "Bash(php artisan route:list --path=admin/users -v)",
+      "Bash(php artisan tinker --execute=\"echo json_encode(App\\Models\\Survey::with(''questions'')->get()->toArray(), JSON_PRETTY_PRINT);\")"
     ],
     "deny": [],
     "ask": []

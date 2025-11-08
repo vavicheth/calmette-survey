@@ -12,10 +12,10 @@ class SurveySeeder extends Seeder
      */
     public function run(): void
     {
-        // Create a default customer satisfaction survey
+        // Create the Calmette Hospital survey
         $survey = Survey::create([
-            'title' => 'Customer Satisfaction Survey',
-            'description' => 'Help us improve our service by sharing your feedback.',
+            'title' => 'ការសទ្ទាបស្ទង់មតិអំពីសេវាកម្មក្នុងមន្ទីរពេទ្យ',
+            'description' => 'សូមបំពេញមតិយោបល់របស់លោកអ្នក អំពីសេវាកម្មក្នុងមន្ទីរពេទ្យ',
             'is_active' => true,
             'is_default' => true,
         ]);
@@ -23,38 +23,183 @@ class SurveySeeder extends Seeder
         // Add questions to the survey
         $survey->questions()->createMany([
             [
-                'question_text' => 'How satisfied are you with our service?',
-                'question_type' => 'rating',
-                'options' => null,
+                'question_text' => '១. តើអ្នកអាចវាយតម្លៃជារួមអំពីការស្វាគមន៏របស់បុគ្គលិកនៅមន្ទីរពេទ្យពេលអ្នកមកទទួលសេវា ល្អក្មេរិតណា?',
+                'question_type' => 'radio',
+                'options' => [
+                    'ក. ល្អណាស់',
+                    'ខ. ល្អ',
+                    'គ. ល្អបង្គួរ',
+                    'ឃ. មធ្យម',
+                    'ង. មិនល្អ',
+                    'ច. មិនល្អទាល់តែសោះ'
+                ],
                 'order' => 1,
                 'is_required' => true,
             ],
             [
-                'question_text' => 'Which of our services have you used?',
-                'question_type' => 'checkbox',
-                'options' => ['Customer Support', 'Technical Support', 'Sales', 'Billing'],
+                'question_text' => '២. តើអ្នកអាចវាយតម្លៃជារួមអំពីបុគ្គលិកនៅមន្ទីរពេទ្យមានភាពរួសរាយរាក់ទាក់ និងទន់ភ្លន់ក្មេរិតណា?',
+                'question_type' => 'radio',
+                'options' => [
+                    'ក. ល្អណាស់',
+                    'ខ. ល្អ',
+                    'គ. ល្អបង្គួរ',
+                    'ឃ. មធ្យម',
+                    'ង. មិនល្អ',
+                    'ច. មិនល្អទាល់តែសោះ'
+                ],
                 'order' => 2,
                 'is_required' => true,
             ],
             [
-                'question_text' => 'How likely are you to recommend us to others?',
+                'question_text' => '៣. តើអ្នកវាយតម្លៃជារួមអំពីការឆ្លើយតបរបស់បុគ្គលិកពេទ្យ នៅពេលអ្នកមានតម្រូវការហៅរក រហ័សក្មេរិតណា?',
                 'question_type' => 'radio',
-                'options' => ['Very Likely', 'Likely', 'Neutral', 'Unlikely', 'Very Unlikely'],
+                'options' => [
+                    'ក. រហ័សខ្លាំងណាស់',
+                    'ខ. រហ័ស',
+                    'គ. រហ័សបង្គួរ',
+                    'ឃ. ធម្មតា',
+                    'ង. យឺត',
+                    'ច. យឺតខ្លាំងណាស់'
+                ],
                 'order' => 3,
                 'is_required' => true,
             ],
             [
-                'question_text' => 'What do you like most about our service?',
-                'question_type' => 'textarea',
-                'options' => null,
+                'question_text' => '៤. នៅពេលអ្នកកំពុងសម្រាករទទួលការពេទ្យបាលនៅក្នុងមន្ទីរពេទ្យ តើអ្នកអាចសម្គាល់ដឹងបានក្មេរិតណា ចំពោះបុគ្គលិកធ្វើការក្នុងមន្ទីរពេទ្យ ថាអ្នកណា ជាគ្រូពេទ្យ គិលានុបដ្ឋាក-យិកា អ្នកសម្អាត...?',
+                'question_type' => 'radio',
+                'options' => [
+                    'ក. ងាយស្រួលសម្គាល់',
+                    'ខ. អាចសម្គាល់បាន',
+                    'គ. សម្គាល់បានខ្លះៗ',
+                    'ឃ. សម្គាល់បានតិចតួច',
+                    'ង. មិនអាចបែងចែកបាន'
+                ],
                 'order' => 4,
+                'is_required' => true,
+            ],
+            [
+                'question_text' => '៥. តើគ្រូពេទ្យបានពន្យល់អ្នក អំពីស្ថានភាពជំងឺ រោគវិនិច្ឆ័យ និងវិធីសាស្រ្តពេទ្យបាល បានកប់កប៉ាយក្មេរិតណា?',
+                'question_type' => 'radio',
+                'options' => [
+                    'ក. ល្អណាស់',
+                    'ខ. ល្អ',
+                    'គ. ល្អបង្គួរ',
+                    'ឃ. មធ្យម',
+                    'ង. មិនល្អ',
+                    'ច. មិនល្អទាល់តែសោះ'
+                ],
+                'order' => 5,
+                'is_required' => true,
+            ],
+            [
+                'question_text' => '៦. ក្នុងអំឡុងពេលសម្រាកពេទ្យបាលនៅមន្ទីរពេទ្យ តើអ្នកនឹងវាយតម្លៃអំពីគុណភាពនៃការថែទាំរបស់បុគ្គលិកពេទ្យ បានល្អក្មេរិតណា?',
+                'question_type' => 'radio',
+                'options' => [
+                    'ក. ល្អណាស់',
+                    'ខ. ល្អ',
+                    'គ. ល្អបង្គួរ',
+                    'ឃ. មធ្យម',
+                    'ង. មិនល្អ',
+                    'ច. មិនល្អទាល់តែសោះ'
+                ],
+                'order' => 6,
+                'is_required' => true,
+            ],
+            [
+                'question_text' => '៧. ក្នុងអំឡុងពេលសម្រាកពេទ្យបាលនៅក្នុងមន្ទីរពេទ្យ តើអ្នកត្រូវបានឱ្យចូលរួម ក្នុងការសម្រេចចិត្តអំពីការថែទាំឬការពេទ្យបាលរបស់អ្នកញឹកញាប់បុណ្ណា?',
+                'question_type' => 'radio',
+                'options' => [
+                    'ក. ជានិច្ចកាល',
+                    'ខ. ពេលខ្លះ',
+                    'គ. ម្ដងម្កាល',
+                    'ឃ. កម្រ',
+                    'ង. មិនដែលសោះ'
+                ],
+                'order' => 7,
+                'is_required' => true,
+            ],
+            [
+                'question_text' => '៨. តើអ្នកអាចវាយតម្លៃអំពីអនាម័យក្នុងបន្ទប់សម្រាកពេទ្យបាលរបស់អ្នកមានសភាពយ៉ាងដូចម្តេច?',
+                'question_type' => 'radio',
+                'options' => [
+                    'ក. ស្អាតណាស់',
+                    'ខ. ស្អាត',
+                    'គ. ស្អាតបង្គួរ',
+                    'ឃ. មធ្យម',
+                    'ង. កខ្វក់',
+                    'ច. កខ្វក់ណាស់'
+                ],
+                'order' => 8,
+                'is_required' => true,
+            ],
+            [
+                'question_text' => '៩. តើអ្នកអាចវាយតម្លៃអំពីភាពស្ងប់ស្ងាត់ក្នុងការសម្រាកពេទ្យបាលរបស់អ្នកមានសភាពយ៉ាងដូចម្តេច?',
+                'question_type' => 'radio',
+                'options' => [
+                    'ក. ល្អណាស់',
+                    'ខ. ល្អ',
+                    'គ. ល្អបង្គួរ',
+                    'ឃ. ធម្មតា',
+                    'ង. រំខាន',
+                    'ច. រំខានខ្លាំងណាស់'
+                ],
+                'order' => 9,
+                'is_required' => true,
+            ],
+            [
+                'question_text' => '១០. តើអ្នកពេញចិត្តក្មេរិតណា ចំពោះគុណភាពនៃអាហារ(បរិមាណ រសជាតិ អានាម័យ…)ដែលមន្ទីរពេទ្យបានផ្តល់ជូនក្នុងអំឡុងពេលសម្រាកពេទ្យបាល? (ប្រសិនបើអ្នកពុំបានសម្រាកនៅផ្នែកសម្ភពតែជួសន្តិភាព សូមរំលងទៅសំណួរទី១៤)',
+                'question_type' => 'radio',
+                'options' => [
+                    'ក. ល្អណាស់',
+                    'ខ. ល្អ',
+                    'គ. ល្អបង្គួរ',
+                    'ឃ. មធ្យម',
+                    'ង. មិនល្អ',
+                    'ច. មិនល្អទាល់តែសោះ'
+                ],
+                'order' => 10,
+                'is_required' => true,
+            ],
+            [
+                'question_text' => '១១. នៅពេលអ្នករៀបចេញពីមន្ទីរពេទ្យ តើអ្នកវាយតម្លៃយ៉ាងដូចម្តេច ចំពោះការពន្យល់របស់គ្រូពេទ្យអំពីវេជ្ជបញ្ជា (ឧទាហរណ៍៖ ការលេបថ្នាំ ក្មេរិតថ្នាំ ផលរំខាន...) និងពេលណាត់ជួបលើកក្រោយ?',
+                'question_type' => 'radio',
+                'options' => [
+                    'ក. ល្អណាស់',
+                    'ខ. ល្អ',
+                    'គ. ល្អបង្គួរ',
+                    'ឃ. មធ្យម',
+                    'ង. មិនល្អ',
+                    'ច. មិនល្អទាល់តែសោះ'
+                ],
+                'order' => 11,
+                'is_required' => true,
+            ],
+            [
+                'question_text' => '១២. តើចនលោះពី ១ ទៅ ១០ (១០ គឺពិន្ទុល្អខ្ព័ស្ជាងគេ) ដោយផ្អែកលើបទពិសោធន៏ក្នុងពេលសម្រាកពេទ្យបាលនៅមន្ទីរពេទ្យ តើអ្នកពេញចិត្តក្មេរិតណា?',
+                'question_type' => 'rating',
+                'options' => null,
+                'order' => 12,
+                'is_required' => true,
+            ],
+            [
+                'question_text' => '១៣. ចនលោះពី ១ ទៅ ១០ (១០ គឺពិន្ទុល្អខ្ព័ស្ជាងគេ) ដោយផ្នែកលើបទពិសោធន៏ក្នុងពេលសម្រាកពេទ្យបាលនៅមន្ទីរពេទ្យ តើអ្នកនឹងដាក់ពិន្ទុប៉ុន្មានចំពោះការណែនាំបង្បអូន មិត្តភក្តិ ឬមិត្តរួមការងារមកទទួលសេវានៅទីនេះ?',
+                'question_type' => 'rating',
+                'options' => null,
+                'order' => 13,
+                'is_required' => true,
+            ],
+            [
+                'question_text' => '១៤. តើអ្នកមានមតិយោបល់ដើម្បីជួយកែលម្អគុណភាពសេវារបស់មន្ទីរពេទ្យឱ្យកាន់តែប្រសើរឡើងដែរឬទេ?',
+                'question_type' => 'text',
+                'options' => null,
+                'order' => 14,
                 'is_required' => false,
             ],
             [
-                'question_text' => 'How can we improve?',
-                'question_type' => 'textarea',
+                'question_text' => 'មន្ទីរពេទ្យកាល់ម៉ែត ផ្នែក៌',
+                'question_type' => 'text',
                 'options' => null,
-                'order' => 5,
+                'order' => 15,
                 'is_required' => false,
             ],
         ]);
