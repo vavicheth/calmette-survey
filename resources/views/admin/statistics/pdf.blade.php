@@ -58,8 +58,8 @@
 <body>
     <div class="header">
         <h1>{{ $survey->title }}</h1>
-        <p><strong>Report Generated:</strong> {{ now()->format('F d, Y H:i:s') }}</p>
-        <p><strong>Date Range:</strong> {{ $startDate }} to {{ $endDate }}</p>
+        <p><strong>Report Generated:</strong> {{ now()->format('d/m/Y H:i:s') }}</p>
+        <p><strong>Date Range:</strong> {{ \Carbon\Carbon::parse($startDate)->format('d/m/Y') }} to {{ \Carbon\Carbon::parse($endDate)->format('d/m/Y') }}</p>
     </div>
 
     <div class="info-box">

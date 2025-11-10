@@ -16,7 +16,7 @@ class DatabaseSeeder extends Seeder
         // Seed users and survey data
         $this->call([
             UserSeeder::class,
-            SurveySeeder::class,
+//            SurveySeeder::class,
         ]);
     }
 }

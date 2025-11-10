@@ -17,11 +17,11 @@ $configData = Helper::appClasses();
   <div class="card-body">
     <form method="GET" class="row g-3">
       <div class="col-md-4">
-        <label class="form-label">Start Date</label>
+        <label class="form-label">Start Date (dd/mm/yyyy)</label>
         <input type="date" class="form-control" name="start_date" value="{{ $startDate }}">
       </div>
       <div class="col-md-4">
-        <label class="form-label">End Date</label>
+        <label class="form-label">End Date (dd/mm/yyyy)</label>
         <input type="date" class="form-control" name="end_date" value="{{ $endDate }}">
       </div>
       <div class="col-md-4 d-flex align-items-end gap-2">

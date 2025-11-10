@@ -43,7 +43,7 @@ class SurveyResponsesExport implements FromCollection, WithHeadings, WithMapping
     {
         $row = [
             $response->id,
-            $response->created_at->format('Y-m-d H:i:s'),
+            $response->created_at->format('d/m/Y H:i:s'),
             $response->respondent_ip,
         ];
 

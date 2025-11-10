@@ -14,7 +14,7 @@
         <script>
           document.write(new Date().getFullYear());
         </script>
-        , Calmette ❤️ Patients
+        - Calmette ❤️ Patients
       </div>
       <div class="d-none d-lg-inline-block">
 {{--        <a href="{{ config('variables.licenseUrl') ? config('variables.licenseUrl') : '#' }}" class="footer-link me-4"--}}

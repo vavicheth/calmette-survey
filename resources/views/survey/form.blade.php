@@ -17,7 +17,11 @@ $configData = Helper::appClasses();
       <div class="card">
         <div class="card-body">
           <div class="app-brand justify-content-center mb-6">
-            <span class="app-brand-text demo text-heading fw-bold">{{ \Illuminate\Support\Str::upper(env("APP_NAME")) }}</span>
+            <h4 class="text-primary">ការផ្តល់មតិយោបល់</h4>
+{{--            <span class="app-brand-text demo text-heading fw-bold">--}}
+{{--              {{ \Illuminate\Support\Str::upper(env("APP_NAME")) }}--}}
+
+{{--            </span>--}}
           </div>
 
           <h4 class="mb-1">{{ $survey->title }}</h4>

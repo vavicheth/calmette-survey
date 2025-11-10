@@ -18,14 +18,18 @@ class StatisticsController extends Controller
         $startDate = $request->input('start_date', Carbon::now()->subDays(30)->format('Y-m-d'));
         $endDate = $request->input('end_date', Carbon::now()->format('Y-m-d'));
 
-        $survey->load(['questions.answers' => function($query) use ($startDate, $endDate) {
-            $query->whereHas('surveyResponse', function($q) use ($startDate, $endDate) {
-                $q->whereBetween('created_at', [$startDate, $endDate]);
+        // Convert to Carbon instances and set time bounds
+        $startDateTime = Carbon::parse($startDate)->startOfDay();
+        $endDateTime = Carbon::parse($endDate)->endOfDay();
+
+        $survey->load(['questions.answers' => function($query) use ($startDateTime, $endDateTime) {
+            $query->whereHas('surveyResponse', function($q) use ($startDateTime, $endDateTime) {
+                $q->whereBetween('created_at', [$startDateTime, $endDateTime]);
             });
         }]);
 
         $responses = $survey->responses()
-            ->whereBetween('created_at', [$startDate, $endDate])
+            ->whereBetween('created_at', [$startDateTime, $endDateTime])
             ->with('answers.question')
             ->latest()
             ->get();
@@ -38,8 +42,8 @@ class StatisticsController extends Controller
 
         foreach ($survey->questions as $question) {
             $answers = $question->answers()
-                ->whereHas('surveyResponse', function($q) use ($startDate, $endDate) {
-                    $q->whereBetween('created_at', [$startDate, $endDate]);
+                ->whereHas('surveyResponse', function($q) use ($startDateTime, $endDateTime) {
+                    $q->whereBetween('created_at', [$startDateTime, $endDateTime]);
                 })
                 ->get();
 
@@ -92,8 +96,12 @@ class StatisticsController extends Controller
         $startDate = $request->input('start_date', Carbon::now()->subDays(30)->format('Y-m-d'));
         $endDate = $request->input('end_date', Carbon::now()->format('Y-m-d'));
 
+        // Convert to Carbon instances and set time bounds
+        $startDateTime = Carbon::parse($startDate)->startOfDay();
+        $endDateTime = Carbon::parse($endDate)->endOfDay();
+
         return Excel::download(
-            new SurveyResponsesExport($survey, $startDate, $endDate),
+            new SurveyResponsesExport($survey, $startDateTime, $endDateTime),
             'survey-' . $survey->id . '-responses-' . date('Y-m-d') . '.xlsx'
         );
     }
@@ -103,8 +111,12 @@ class StatisticsController extends Controller
         $startDate = $request->input('start_date', Carbon::now()->subDays(30)->format('Y-m-d'));
         $endDate = $request->input('end_date', Carbon::now()->format('Y-m-d'));
 
+        // Convert to Carbon instances and set time bounds
+        $startDateTime = Carbon::parse($startDate)->startOfDay();
+        $endDateTime = Carbon::parse($endDate)->endOfDay();
+
         $responses = $survey->responses()
-            ->whereBetween('created_at', [$startDate, $endDate])
+            ->whereBetween('created_at', [$startDateTime, $endDateTime])
             ->with('answers.question')
             ->get();
 
@@ -114,8 +126,8 @@ class StatisticsController extends Controller
         $statistics = [];
         foreach ($survey->questions as $question) {
             $answers = $question->answers()
-                ->whereHas('surveyResponse', function($q) use ($startDate, $endDate) {
-                    $q->whereBetween('created_at', [$startDate, $endDate]);
+                ->whereHas('surveyResponse', function($q) use ($startDateTime, $endDateTime) {
+                    $q->whereBetween('created_at', [$startDateTime, $endDateTime]);
                 })
                 ->get();
 
