@@ -16,14 +16,10 @@ $configData = Helper::appClasses();
     <div class="authentication-inner py-6">
       <div class="card">
         <div class="card-body">
-          <div class="app-brand justify-content-center mb-6">
+          <div class="app-brand-img text-center">
+            <img class="mb-4" src="{{asset('assets/img/logo-text.png')}}" alt="Logo" height="50px" srcset="">
             <h4 class="text-primary">ការផ្តល់មតិយោបល់</h4>
-{{--            <span class="app-brand-text demo text-heading fw-bold">--}}
-{{--              {{ \Illuminate\Support\Str::upper(env("APP_NAME")) }}--}}
-
-{{--            </span>--}}
           </div>
-
           <h4 class="mb-1">{{ $survey->title }}</h4>
           @if($survey->description)
             <p class="mb-6">{{ $survey->description }}</p>
